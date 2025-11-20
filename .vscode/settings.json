@@ -67,5 +67,48 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "SAM_Template.slnx"
+    "dotnet.defaultSolution": "SAM_Template.slnx",
+
+
+    // =============== 共通エディタ設定 ===============
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.wordWrap": "off",
+    "editor.rulers": [100],
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.encoding": "utf8",
+
+  // =============== 言語別設定: C# ===============
+    "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
+    },
+
+  // =============== C# 拡張機能／.NET 系 設定 ===============
+    "dotnet.backgroundAnalysis.analyzerDiagnosticsScope": "fullSolution",
+    "dotnet.backgroundAnalysis.compilerDiagnosticsScope": "fullSolution",
+    "dotnet.codeLens.enableReferencesCodeLens": true,
+    "dotnet.codeLens.enableTestsCodeLens": true,
+
+  // =============== タブ／ウィンドウ／エディタ動作 ===============
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.enablePreviewFromQuickOpen": false,
+    "workbench.editor.showTabs": "multiple",
+    "workbench.editor.tabCloseButton": "right",
+    "workbench.editor.labelFormat": "short",
+    "window.openFilesInNewWindow": "off",
+
+  // =============== 非同期メソッド命名 例（Roslyn 规则 via .editorconfig） ===============
+  // （こちらは .editorconfig 側に記述するが、settings.json に補足設定を入れてもよい）
+
+  // =============== その他 ===============
+    "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false,
+    "workbench.editor.tabActionLocation": "right"
 }

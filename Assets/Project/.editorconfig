@@ -1,0 +1,34 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+# ===== ブレースを同じ行に置く設定 =====
+csharp_new_line_before_open_brace = types: none
+
+# ===== 非同期メソッドは Async サフィックス =====
+dotnet_naming_rule.async_methods_should_end_with_async.severity = warning
+dotnet_naming_rule.async_methods_should_end_with_async.symbols = async_methods
+dotnet_naming_rule.async_methods_should_end_with_async.style = end_with_async
+
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+dotnet_naming_symbols.async_methods.required_modifiers = async
+
+dotnet_naming_style.end_with_async.required_suffix = Async
+dotnet_naming_style.end_with_async.capitalization = pascal_case
+
+# ===== C# のインデント補助 =====
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_switch_labels = false
+csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = false
+csharp_indent_labels = one_less_than_current
