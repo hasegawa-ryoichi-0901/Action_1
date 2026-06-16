@@ -8,6 +8,7 @@ namespace AsyncFSM
         UniTask OnEnter();
         UniTask OnExit();
         void SetOptions(Options options);
-        void OnUpdate();
+        void OnUpdate(float deltaTime);
+        bool HasUpdate { get; }
     }
 }

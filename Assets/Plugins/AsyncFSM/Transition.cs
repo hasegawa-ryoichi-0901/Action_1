@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 
 namespace AsyncFSM
 {
@@ -13,6 +14,13 @@ namespace AsyncFSM
     {
         public Type Type { get; }
         public T Options { get; }
+
+        protected UniTaskCompletionSource<T> _tcs = new UniTaskCompletionSource<T>();
+        public UniTask<T> Task => _tcs.Task;
+        public void OnCompleted()
+        {
+            this._tcs.TrySetResult(this.Options);
+        }
 
         protected Transition(Type type, T options)
         {
