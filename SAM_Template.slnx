@@ -1,18 +1,4 @@
 ﻿<Solution>
   <Project Path="Assembly-CSharp-firstpass.csproj" />
-  <Project Path="UniTask.csproj" />
-  <Project Path="ZLinq.Unity.UnityCollectoins.csproj" />
-  <Project Path="UniTask.Linq.csproj" />
-  <Project Path="R3.Unity.csproj" />
-  <Project Path="NuGetForUnity.csproj" />
-  <Project Path="MessagePack.Unity.csproj" />
-  <Project Path="R3.Unity.Editor.csproj" />
-  <Project Path="ZLinq.Unity.csproj" />
-  <Project Path="UniTask.TextMeshPro.csproj" />
-  <Project Path="R3.Unity.TextMeshPro.csproj" />
-  <Project Path="UniTask.Editor.csproj" />
-  <Project Path="R3.Unity.XRInteractionToolkit.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
-  <Project Path="UniTask.Addressables.csproj" />
-  <Project Path="UniTask.DOTween.csproj" />
 </Solution>
