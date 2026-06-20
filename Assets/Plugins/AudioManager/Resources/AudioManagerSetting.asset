@@ -18,8 +18,8 @@ MonoBehaviour:
   _bgmBaseVolume: 1
   _seBaseVolume: 1
   _shouldAdjustSEVolumeRate: 1
-  _isAutoGenerateBGMManager: 1
-  _isAutoGenerateSEManager: 1
+  _isAutoGenerateBGMManager: 0
+  _isAutoGenerateSEManager: 0
   _isDestroyBGMManager: 0
   _isDestroySEManager: 0
   _bgmCacheType: 1
