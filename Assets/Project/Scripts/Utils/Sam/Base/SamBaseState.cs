@@ -12,7 +12,7 @@ public abstract class SamBaseState<TContext, TModel, TStateParam> : State<TState
     public TModel Model { get; protected set; }
 
     public SamBaseState(TContext context) {
-        this.Context = context;
-        this.Model = this.Context.GetModel<TModel>();
+        Context = context;
+        Model = Context.GetModel<TModel>();
     }
 }
