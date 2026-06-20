@@ -124,5 +124,10 @@
     "omnisharp.useGlobalMono": "always",
     "csharpextensions.reFormatAfterChange": false,
     "editor.unicodeHighlight.nonBasicASCII": false, // Welcome Page を表示しない
-    "editor.bracketPairColorization.enabled": true // 括弧に色を付ける
+    "editor.bracketPairColorization.enabled": true, // 括弧に色を付ける
+    "cSpell.words": [
+        "accessibilities",
+        "Behaviour",
+        "Cysharp"
+    ]
 }
