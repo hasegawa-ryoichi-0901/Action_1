@@ -13,34 +13,53 @@ MonoBehaviour:
   m_Name: AudioManagerSetting
   m_EditorClassIdentifier: 
   _isAutoUpdateAudioPath: 1
-  _bgmAudioPlayerNum: 3
-  _seAudioPlayerNum: 10
-  _bgmBaseVolume: 1
-  _seBaseVolume: 1
+  _bgmAudioPlayerNum: 2
+  _seAudioPlayerNum: 6
+  _voiceAudioPlayerNum: 3
+  _bgmBaseVolume: 0.3036823
+  _seBaseVolume: 0.5083867
+  _voiceBaseVolume: 0.6076082
+  _isBgmMute: 0
+  _isSeMute: 0
+  _isVoiceMute: 0
   _shouldAdjustSEVolumeRate: 1
+  _shouldAdjustVoiceVolumeRate: 1
   _isAutoGenerateBGMManager: 0
   _isAutoGenerateSEManager: 0
-  _isDestroyBGMManager: 0
-  _isDestroySEManager: 0
-  _bgmCacheType: 1
-  _seCacheType: 1
+  _isAutoGenerateVoiceManager: 0
+  _isDestroyBGMManager: 1
+  _isDestroySEManager: 1
+  _isDestroyVoiceManager: 1
+  _bgmCacheType: 0
+  _seCacheType: 0
+  _voiceCacheType: 0
   _isReleaseBGMCache: 1
   _isReleaseSECache: 1
-  _isAutoUpdateBGMSetting: 1
-  _isAutoUpdateSESetting: 1
+  _isReleaseVoiceCache: 0
+  _isAutoUpdateBGMSetting: 0
+  _isAutoUpdateSESetting: 0
+  _isAutoUpdateVoiceSetting: 0
   _forceToMonoForBGM: 1
   _forceToMonoForSE: 1
+  _forceToMonoForVoice: 0
   _normalizeForBGM: 1
   _normalizeForSE: 1
+  _normalizeForVoice: 1
   _ambisonicForBGM: 0
   _ambisonicForSE: 0
+  _ambisonicForVoice: 0
   _loadInBackgroundForBGM: 0
   _loadInBackgroundForSE: 0
+  _loadInBackgroundForVoice: 0
   _loadTypeForBGM: 2
   _loadTypeForSE: 1
+  _loadTypeForVoice: 1
   _qualityForBGM: 0.3
   _qualityForSE: 0.3
+  _qualityForVoice: 0.3
   _compressionFormatForBGM: 1
   _compressionFormatForSE: 1
+  _compressionFormatForVoice: 1
   _sampleRateSettingForBGM: 1
   _sampleRateSettingForSE: 1
+  _sampleRateSettingForVoice: 1

@@ -1,4 +1,8 @@
-﻿namespace KanKikuchi.AudioManager {
+﻿using System.Threading.Tasks;
+using R3;
+using ZLinq;
+
+namespace KanKikuchi.AudioManager {
 
 using System;
 using System.IO;
@@ -12,11 +16,20 @@ public enum AudioCacheType {
 	None, All, Used
 }
 
+public static class AudioManager {
+	public static float GetAudioLength(AudioPlayer player) {
+		if (player == null || player.CurrentClip == null) {
+			return 0;
+		}
+
+		return player.CurrentClip.length;
+	}
+}
 /// <summary>
 /// オーディオを管理するマネージャクラスの親クラス
 /// </summary>
 public abstract class AudioManager<T> : SingletonMonoBehaviour<T> where T : MonoBehaviourWithInit {
-
+	
 	//キャッシュの種類
 	private AudioCacheType _cacheType;
 	
@@ -32,9 +45,16 @@ public abstract class AudioManager<T> : SingletonMonoBehaviour<T> where T : Mono
 	//AudioPlayerの数(同時再生可能数)
 	protected abstract int _audioPlayerNum { get; }
 	public int AudioPlayerNum => _audioPlayerNum;
+	public bool IsMute = false;
 
 	//ボリュームの基準と倍率
-	private float _baseVolume = 1f;
+	protected float BaseVolume {
+		get => this._baseVolume.Value;
+		set => this._baseVolume.Value = value;
+	}
+
+	private ReactiveProperty<float> _baseVolume = new ReactiveProperty<float>(1.0f);
+	public Observable<float> BaseVolumeAsObservable() => this._baseVolume.AsObservable();
 
 	//=================================================================================
 	//初期化、破棄
@@ -61,7 +81,10 @@ public abstract class AudioManager<T> : SingletonMonoBehaviour<T> where T : Mono
 			};
 		}
 	}
-	
+
+	public void ClearAudioCache() {
+		this._audioClipDict.Clear();
+	}
 
 	//=================================================================================
 	//更新
@@ -83,20 +106,29 @@ public abstract class AudioManager<T> : SingletonMonoBehaviour<T> where T : Mono
 	/// ボリュームの基準を変更する(再生中のボリュームも変更する)
 	/// </summary>
 	public void ChangeBaseVolume(float baseVolume) {
-		_baseVolume = baseVolume;
-		_audioPlayerList.Where(player => player.CurrentState != AudioPlayer.State.Wait).ToList()
-			.ForEach(player => player.ChangeVolume(_baseVolume));
+		BaseVolume = baseVolume;
+		_audioPlayerList
+			.AsValueEnumerable()
+			.Where(player => player.CurrentState != AudioPlayer.State.Wait).ToList()
+			.ForEach(player => player.ChangeVolume(BaseVolume));
 	}
 	
 	//=================================================================================
 	//取得、判定
 	//=================================================================================
 
+	public string GetPlayingAudioName() {
+		return _audioPlayerList
+			.AsValueEnumerable()
+			.FirstOrDefault(player => player.CurrentState == AudioPlayer.State.Playing)?.CurrentAudioName;
+	}
 	/// <summary>
 	/// 再生中のオーディオの名前を全て取得
 	/// </summary>
 	public List<string> GetCurrentAudioNames() {
-		return _audioPlayerList.Where(player => player.CurrentState != AudioPlayer.State.Wait).Select(player => player.CurrentAudioName).ToList();
+		return _audioPlayerList
+			.AsValueEnumerable()
+			.Where(player => player.CurrentState != AudioPlayer.State.Wait).Select(player => player.CurrentAudioName).ToList();
 	}
 
 	/// <summary>
@@ -113,15 +145,17 @@ public abstract class AudioManager<T> : SingletonMonoBehaviour<T> where T : Mono
 	/// <summary>
 	/// 再生開始
 	/// </summary>
-	protected void RunPlayer(AudioClip audioClip, float volumeRate, float delay, float pitch, bool isLoop, Action callback = null) {
-		GetNextAudioPlayer().Play(audioClip, _baseVolume, volumeRate, delay, pitch, isLoop, callback);
+	protected AudioPlayer RunPlayer(AudioClip audioClip, float volumeRate, float delay, float pitch, bool isLoop, Action callback = null) {
+		var player = GetNextAudioPlayer();
+		player.Play(audioClip, BaseVolume, volumeRate, delay, pitch, isLoop, callback);
+		return player;
 	}
 	
 	/// <summary>
 	/// 再生開始
 	/// </summary>
-	protected void RunPlayer(string audioPath, float volumeRate, float delay, float pitch, bool isLoop, Action callback = null) {
-		RunPlayer(GetAudioClip(audioPath), volumeRate, delay, pitch, isLoop, callback);
+	protected AudioPlayer RunPlayer(string audioPath, float volumeRate, float delay, float pitch, bool isLoop, Action callback = null) {
+		return RunPlayer(GetAudioClip(audioPath), volumeRate, delay, pitch, isLoop, callback);
 	}
 	
 	//オーディオのパスを名前に変換
@@ -150,7 +184,7 @@ public abstract class AudioManager<T> : SingletonMonoBehaviour<T> where T : Mono
 	}
 
 	//次に再生するAudioPlayerを取得
-	private AudioPlayer GetNextAudioPlayer() {
+	protected AudioPlayer GetNextAudioPlayer() {
 		var audioPlayer = _audioPlayerList[_nextAudioPlayerNo];
 
 		_nextAudioPlayerNo++;
@@ -207,6 +241,14 @@ public abstract class AudioManager<T> : SingletonMonoBehaviour<T> where T : Mono
 		var audioName = PathToName(audioPathOrName);
 		Fade(audioName, duration, 0, 1, callback);
 	}
+
+	public async Task FadeInAsync(string audioPathOrName, float duration = 1f) {
+		var audioName = PathToName(audioPathOrName);
+		var t = new TaskCompletionSource<AudioPlayer>();
+		
+		FadeIn(audioPathOrName, duration);
+		await Task.Delay(TimeSpan.FromSeconds(duration));
+	} 
 	
 	/// <summary>
 	/// 再生しているものをフェードする
@@ -261,6 +303,27 @@ public abstract class AudioManager<T> : SingletonMonoBehaviour<T> where T : Mono
 	/// </summary>
 	public void UnPause() {
 		_audioPlayerList.ForEach(player => player.UnPause());
+	}
+
+	//=================================================================================
+	//ミュート
+	//=================================================================================
+
+	/// <summary>
+	/// ミュート
+	/// </summary>
+	public void Mute() {
+		IsMute = true;
+		_audioPlayerList.ForEach(player => player.Mute());
+	}
+
+	/// <summary>
+	/// ミュート解除
+	/// </summary>
+	public void UnMute()
+	{
+		_audioPlayerList.ForEach(player => player.UnMute());
+		IsMute = false;
 	}
 
 }

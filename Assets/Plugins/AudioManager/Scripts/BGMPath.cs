@@ -1,13 +1,22 @@
-﻿namespace KanKikuchi.AudioManager{
+﻿using System.Collections.Generic;
+namespace KanKikuchi.AudioManager{
 
 /// <summary>
 /// BGMファイルへのパスを定数で管理するクラス
 /// </summary>
 public static class BGMPath{
 
-	public const string BATTLE27    = "BGM/Battle/battle27";
-	public const string FANTASY14   = "BGM/fantasy14";
-	public const string HEARTBEAT01 = "BGM/heartbeat01";
+public enum BGMPathType{
+
+NONE = -1,
+
+BGM,
+
+}
+	public const string BGM = "BGM/bgm";
+public static Dictionary<BGMPathType, string> Dic = new() {
+{BGMPathType.BGM,"BGM/bgm"},
+};
 
 }
 

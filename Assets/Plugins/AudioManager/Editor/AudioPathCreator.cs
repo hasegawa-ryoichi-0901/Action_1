@@ -1,5 +1,8 @@
-﻿namespace KanKikuchi.AudioManager {
+﻿using ZLinq;
 
+namespace KanKikuchi.AudioManager {
+
+#if UNITY_EDITOR
 using System;
 using System.IO;
 using UnityEditor;
@@ -13,7 +16,8 @@ using System.Linq;
 public class AudioPathCreator : AssetPostprocessor {
 
 	//オーディオファイルが入ってるディレクトリへのパス
-	public static readonly string BGM_DIRECTORY_PATH = "Resources/" + BGMManager.AUDIO_DIRECTORY_PATH, SE_DIRECTORY_PATH = "Resources/" + SEManager.AUDIO_DIRECTORY_PATH;
+	public static readonly string BGM_DIRECTORY_PATH = "Resources/" + BGMManager.AUDIO_DIRECTORY_PATH;
+	public static readonly string SE_DIRECTORY_PATH = "Resources/" + SEManager.AUDIO_DIRECTORY_PATH;
 
 	//=================================================================================
 	//変更の監視
@@ -56,7 +60,6 @@ public class AudioPathCreator : AssetPostprocessor {
 	//=================================================================================
 	//スクリプト作成
 	//=================================================================================
-
 	//BGMとSEファイルへのパスを定数で管理するクラスを作成
 	[MenuItem("Tools/KanKikuchi.AudioManager/Create BGM&SE Path")]
 	private static void CreateAudionPath() {
@@ -75,7 +78,6 @@ public class AudioPathCreator : AssetPostprocessor {
 	private static void CreateSEPath() {
 		Create(SE_DIRECTORY_PATH);
 	}
-
 	//オーディオファイルへのパスを定数で管理するクラスを作成
 	private static void Create(string directoryPath) {
 		//オーディオファイルへのパスを抽出
@@ -102,6 +104,7 @@ public class AudioPathCreator : AssetPostprocessor {
 		//このスクリプトがある所へのパス取得し、定数クラスを書き出す場所を決定
 		string selfFileName = "AudioPathCreator.cs";
 		string selfPath = Directory.GetFiles("Assets", "*", System.IO.SearchOption.AllDirectories)
+			.AsValueEnumerable()
 			.FirstOrDefault(path => System.IO.Path.GetFileName(path) == selfFileName);
 
 		string exportPath = selfPath.Replace(selfFileName, "").Replace("Editor","Scripts");
@@ -111,4 +114,5 @@ public class AudioPathCreator : AssetPostprocessor {
 	}
 
 }
+#endif
 }

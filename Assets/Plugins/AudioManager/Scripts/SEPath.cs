@@ -1,13 +1,25 @@
-﻿namespace KanKikuchi.AudioManager{
+﻿using System.Collections.Generic;
+namespace KanKikuchi.AudioManager{
 
 /// <summary>
 /// SEファイルへのパスを定数で管理するクラス
 /// </summary>
 public static class SEPath{
 
-	public const string JINGLE10 = "SE/Jingle/jingle10";
-	public const string SYSTEM20 = "SE/system20";
-	public const string SYSTEM23 = "SE/system23";
+public enum SEPathType{
+
+NONE = -1,
+
+_00_BUTTON_N,
+_01_BUTTON_Y,
+
+}
+	public const string _00_BUTTON_N = "SE/_00_button_n";
+	public const string _01_BUTTON_Y = "SE/_01_button_y";
+public static Dictionary<SEPathType, string> Dic = new() {
+{SEPathType._00_BUTTON_N,"SE/_00_button_n"},
+{SEPathType._01_BUTTON_Y,"SE/_01_button_y"},
+};
 
 }
 

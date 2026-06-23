@@ -1,94 +1,84 @@
-﻿namespace KanKikuchi.AudioManager
-{
-    using Cysharp.Threading.Tasks;
-    using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
 
-    /// <summary>
-    /// シングルトンパターンを実装する用のクラス
-    /// </summary>
-    public class SingletonMonoBehaviour<T> : MonoBehaviourWithInit where T : MonoBehaviourWithInit
-    {
+namespace KanKikuchi.AudioManager {
 
-        //インスタンス
-        private static T _instance;
+using UnityEngine;
 
-        //インスタンスを外部から参照する用(getter)
-        public static T Instance
-        {
-            get
-            {
-                //インスタンスがまだ作られていない
-                if (_instance == null)
-                {
+/// <summary>
+/// シングルトンパターンを実装する用のクラス
+/// </summary>
+public class SingletonMonoBehaviour<T> : MonoBehaviourWithInit where T : MonoBehaviourWithInit {
 
-                    //シーン内からインスタンスを取得
-                    _instance = (T)FindObjectOfType(typeof(T));
+	//インスタンス
+	private static T _instance;
 
-                    //シーン内に存在しない場合はエラー
-                    if (_instance == null)
-                    {
-                        Debug.LogError(typeof(T) + " is nothing");
-                    }
-                    //発見した場合は初期化
-                    else
-                    {
-                        _instance.InitIfNeeded();
-                    }
+	//インスタンスを外部から参照する用(getter)
+	public static T Instance {
+		get {
+			//インスタンスがまだ作られていない
+			if (_instance == null) {
 
-                }
+				//シーン内からインスタンスを取得
+				_instance = (T) FindObjectOfType(typeof(T));
 
-                return _instance;
-            }
-        }
+				//シーン内に存在しない場合はエラー
+				if (_instance == null) {
+					Debug.LogWarning(typeof(T) + " is nothing");
+				}
+				//発見した場合は初期化
+				else {
+					_instance.InitIfNeeded();
+				}
 
-        //=================================================================================
-        //初期化
-        //=================================================================================
+			}
 
-        protected override async UniTask Awake()
-        {
-            //存在しているインスタンスが自分であれば問題なし
-            if (this == Instance)
-            {
-                return;
-            }
+			return _instance;
+		}
+	}
 
-            //自分じゃない場合は重複して存在しているので、エラー
-            Debug.LogError(typeof(T) + " is duplicated");
-        }
+	//=================================================================================
+	//初期化
+	//=================================================================================
 
-    }
+	protected override async UniTask Awake() {
+		//存在しているインスタンスが自分であれば問題なし
+		if (this == Instance) {
+			return;
+		}
 
-    /// <summary>
-    /// 初期化メソッドを備えたMonoBehaviour
-    /// </summary>
-    public class MonoBehaviourWithInit : MonoBehaviour
-    {
+		//自分じゃない場合は重複して存在しているので、エラー
+		Debug.LogError(typeof(T) + " is duplicated");
+	}
 
-        //初期化したかどうかのフラグ
-        private bool _isInitialized = false;
+}
 
-        /// <summary>
-        /// 初期化が必要なら初期化する
-        /// </summary>
-        public void InitIfNeeded()
-        {
-            if (_isInitialized)
-            {
-                return;
-            }
+/// <summary>
+/// 初期化メソッドを備えたMonoBehaviour
+/// </summary>
+public class MonoBehaviourWithInit : MonoBehaviour {
 
-            Init();
-            _isInitialized = true;
-        }
+	//初期化したかどうかのフラグ
+	private bool _isInitialized = false;
 
-        /// <summary>
-        /// 初期化(Awake時かその前の初アクセスどちらかの一度しか行われない)
-        /// </summary>
-        protected virtual void Init() { }
+	/// <summary>
+	/// 初期化が必要なら初期化する
+	/// </summary>
+	public void InitIfNeeded() {
+		if (_isInitialized) {
+			return;
+		}
 
-        //sealed overrideするためにvirtualで作成
-        protected virtual async UniTask Awake() { }
+		Init();
+		_isInitialized = true;
+	}
 
-    }
+	/// <summary>
+	/// 初期化(Awake時かその前の初アクセスどちらかの一度しか行われない)
+	/// </summary>
+	protected virtual void Init() { }
+
+	//sealed overrideするためにvirtualで作成
+	protected virtual async UniTask Awake() { }
+
+}
 }

@@ -33,15 +33,31 @@ public class AudioManagerSetting : ScriptableObject {
   
   //同時再生可能数
   [SerializeField]
-  private int _bgmAudioPlayerNum = 3, _seAudioPlayerNum = 10;
+  private int _bgmAudioPlayerNum = 3, _seAudioPlayerNum = 6;
   public  int  BGMAudioPlayerNum => _bgmAudioPlayerNum;
   public  int  SEAudioPlayerNum  => _seAudioPlayerNum;
   
   //基準ボリューム
   [SerializeField]
   private float _bgmBaseVolume = 1f, _seBaseVolume = 1f;
-  public  float  BGMBaseVolume => _bgmBaseVolume;
-  public  float  SEBaseVolume  => _seBaseVolume;
+  public  float  BGMBaseVolume {
+    get => this._bgmBaseVolume;
+    set => this._bgmBaseVolume = value;
+  }
+  public  float  SEBaseVolume {
+    get => this._seBaseVolume;
+    set => this._seBaseVolume = value;
+  }
+  [SerializeField]
+  private bool _isBgmMute = false, _isSeMute = false;
+  public bool BGMMute {
+    get => this._isBgmMute;
+    set => this._isBgmMute = value;
+  }
+  public bool SEMute {
+    get => this._isSeMute;
+    set => this._isSeMute = value;
+  }
   
   //SEのボリューム倍率調整をするか
   [SerializeField]

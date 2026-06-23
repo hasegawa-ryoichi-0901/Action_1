@@ -1,4 +1,7 @@
-﻿namespace KanKikuchi.AudioManager {
+﻿using System.Runtime.CompilerServices;
+using R3;
+
+namespace KanKikuchi.AudioManager {
 
 using System;
 using System.Collections.Generic;
@@ -17,9 +20,11 @@ public class AudioPlayer {
 
   //再生中のオーディオの名前
   public string CurrentAudioName => _audioSource.clip == null ? "" : _audioSource.clip.name;
+  public AudioClip CurrentClip => _audioSource.clip;
 
   //再生終了後の処理
   private Action _callback;
+  private Subject<AudioPlayer> _subject;
 
   //状態
   public enum State {
@@ -31,6 +36,7 @@ public class AudioPlayer {
 
   //ボリュームの基準と倍率
   private float _baseVolume, _volumeRate;
+  public float BaseVolume => this._baseVolume;
   public float CurrentVolume => _baseVolume * _volumeRate;
   
   //再生までの待ち時間
@@ -54,6 +60,9 @@ public class AudioPlayer {
   //更新
   //=================================================================================
 
+  public void ChangeState(State state) {
+    this._currentState = state;
+  }
   public void Update() {
     //実行中の終了判定
     if (_currentState == State.Playing && !_audioSource.isPlaying && Mathf.Approximately(_audioSource.time, 0)) {
@@ -125,9 +134,23 @@ public class AudioPlayer {
     _audioSource.volume = GetVolume();
   }
 
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  private static float GetEaseVolume(float t) { return t * t * t; }
   //ボリュームを取得
   private float GetVolume() {
-    return _baseVolume * _volumeRate;
+    return GetEaseVolume(_baseVolume) * _volumeRate;
+  }
+
+  public IDisposable Subscribe(Action<AudioPlayer> action) {
+    if (this._subject == null) {
+      this._subject = new Subject<AudioPlayer>();
+    }
+    return this._subject.Subscribe(action);
+  }
+
+  public void ClearSubscribe() {
+    this._subject.Dispose();
+    this._subject = null;
   }
 
   //=================================================================================
@@ -138,6 +161,9 @@ public class AudioPlayer {
   /// 再生開始
   /// </summary>
   public void Play(AudioClip audioClip, float baseVolume, float volumeRate, float delay, float pitch, bool isLoop, Action callback = null) {
+    if (audioClip == null) {
+      return;
+    }
     //停止中でなければ停止させる
     if (_currentState != AudioPlayer.State.Wait) {
       Stop();
@@ -189,8 +215,10 @@ public class AudioPlayer {
   /// 再生を停止する
   /// </summary>
   public void Stop() {
-    _callback = null;
     Finish();
+    _callback = null;
+    this._subject?.OnCompleted();
+    this._subject = null;
   }
 
   //再生終了
@@ -205,6 +233,7 @@ public class AudioPlayer {
     _fadeDuration = 0;
 
     _callback?.Invoke();
+    this._subject?.OnNext(this);
   }
 
   //=================================================================================
@@ -272,7 +301,56 @@ public class AudioPlayer {
       Fade(duration, from, to, callback);
     }
   }
-  
+
+  public void Fade(AudioClip audioClip, float baseVolume, float volumeRate, float pitch, bool isLoop, float duration, float from, float to, Action callback = null, Action fadeCallback = null) {
+    if (_currentState != State.Playing && _currentState != State.Delay && _currentState != State.Fading) {
+      return;
+    }
+    
+    _fadeProgress = 0;
+    _fadeDuration = duration;
+    _fadeFrom     = from;
+    _fadeTo       = to;
+    _fadeCallback = fadeCallback;
+    if (audioClip == null) {
+      return;
+    }
+    //停止中でなければ停止させる
+    if (_currentState != AudioPlayer.State.Wait) {
+      Stop();
+    }
+    _audioSource.Stop();
+
+    _volumeRate = volumeRate;
+    ChangeVolume(baseVolume);
+    
+    _initialDelay = 0;
+    _currentDelay = _initialDelay;
+    
+    _audioSource.pitch = pitch;
+    _audioSource.loop  = isLoop;
+    _callback = callback;
+    
+    _audioSource.clip = audioClip;
+    
+    _currentState = _currentDelay > 0 ? State.Delay : State.Playing;
+    _audioSource.volume = GetVolume() * _fadeFrom;
+    if (_currentState == State.Playing) {
+      Fade(duration, from, to, _fadeCallback);
+      _audioSource.Play();
+    }
+    
+    //ループ再生でなければ、再生終了のチェックをする
+    if (_audioSource.loop) {
+      return;
+    }
+
+    //ポーズされていたらすぐに止める
+    if (_currentState == State.Pause) {
+      Pause();
+    }
+  }
+
   /// <summary>
   /// フェード
   /// </summary>
@@ -295,6 +373,69 @@ public class AudioPlayer {
     }
   }
 
+  public void FadeIn(AudioClip audioClip, float baseVolume, float volumeRate, float pitch, bool isLoop, float duration, float from, float to, Action callback = null) {
+    if (audioClip == null) {
+      return;
+    }
+    _fadeProgress = 0;
+    _fadeDuration = duration;
+    _fadeFrom     = from;
+    _fadeTo       = to;
+    _fadeCallback = callback;
+    //停止中でなければ停止させる
+    if (_currentState != AudioPlayer.State.Wait) {
+      Stop();
+    }
+    _audioSource.Stop();
+
+    _volumeRate = volumeRate;
+    ChangeVolume(baseVolume);
+    
+    _initialDelay = 0;
+    _currentDelay = _initialDelay;
+    
+    _audioSource.pitch = pitch;
+    _audioSource.loop  = isLoop;
+    _callback = callback;
+    
+    _audioSource.clip = audioClip;
+    
+    _currentState = _currentDelay > 0 ? State.Delay : State.Playing;
+    _audioSource.volume = GetVolume() * _fadeFrom;
+    if (_currentState == State.Playing) {
+      Fade(duration, from, to, callback);
+      _audioSource.Play();
+    }
+    
+    //ループ再生でなければ、再生終了のチェックをする
+    if (_audioSource.loop) {
+      return;
+    }
+
+    //ポーズされていたらすぐに止める
+    if (_currentState == State.Pause) {
+      Pause();
+    }
+  }
+  //=================================================================================
+  //ミュート
+  //=================================================================================
+  
+  /// <summary>
+  /// ミュート
+  /// </summary>
+  public void Mute()
+  {
+    _audioSource.mute = true;
+  }
+
+  /// <summary>
+  /// ミュート解除
+  /// </summary>
+  public void UnMute()
+  {
+    _audioSource.mute = false;
+  }
 }
 
 }

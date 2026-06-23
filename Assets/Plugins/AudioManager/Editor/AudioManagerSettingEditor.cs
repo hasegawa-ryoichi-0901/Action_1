@@ -1,5 +1,5 @@
 ﻿namespace KanKikuchi.AudioManager {
-
+#if UNITY_EDITOR
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,6 +42,10 @@ public class AudioManagerSettingEditor : Editor {
       
       ShowPropertyField("_shouldAdjustSEVolumeRate", "Should Adjust SE Volume Rate", "SEのボリューム倍率調整をする");
     });
+    ShowGUIAtSkin(() => {
+      ShowPropertyField("_isBgmMute", "BGM Mute", "BGMのミュート");
+      ShowPropertyField("_isSeMute",  "SE Mute",  "SEのミュート");
+    });
     
     ShowGUIAtSkin(() => {
       ShowPropertyField("_isAutoGenerateBGMManager", "Is Auto Generate BGM Manager", "BGMManagerを自動生成する");
@@ -82,8 +86,7 @@ public class AudioManagerSettingEditor : Editor {
     if (GUILayout.Button("全" + targetTypeName + "ファイル更新")) {
       if (targetTypeName == "BGM") {
         AudioPostProcessor.UpdateBGMSetting();
-      }
-      else {
+      } else if (targetTypeName == "SE") {
         AudioPostProcessor.UpdateSESetting();
       }
     }
@@ -134,5 +137,5 @@ public class AudioManagerSettingEditor : Editor {
   }
   
 }
-
+#endif
 }

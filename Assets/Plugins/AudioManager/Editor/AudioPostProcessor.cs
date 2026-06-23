@@ -1,5 +1,5 @@
 ﻿namespace KanKikuchi.AudioManager {
-
+#if UNITY_EDITOR
 using System;
 using System.IO;
 using System.Linq;
@@ -30,6 +30,7 @@ public class AudioPostProcessor : AssetPostprocessor {
     //対象のディレクトのファイルがあるかチェック
     var targetBGMPathList = new List<string>();
     var targetSEPathList  = new List<string>();
+    var targetVoicePathList  = new List<string>();
 
     foreach (var path in importedAssets) {
       if (path.Contains(bgmDirectoryPath)) {
@@ -88,7 +89,7 @@ public class AudioPostProcessor : AssetPostprocessor {
   //=================================================================================
 
   //全オーディオファイルの設定を更新する
-  [MenuItem("Tools/KanKikuchi.AudioManager/Update BGM&SE Setting")]
+  [MenuItem("Tools/KanKikuchi.AudioManager/Update BGM&SE&Voice Setting")]
   private static void UpdateSetting() {
     UpdateBGMSetting();
     UpdateSESetting();
@@ -160,5 +161,5 @@ public class AudioPostProcessor : AssetPostprocessor {
   }
   
 }
-
+#endif
 }
