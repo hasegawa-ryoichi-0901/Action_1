@@ -16,5 +16,7 @@ public class DebugContext : SingletonMonoBehaviour<DebugContext> {
                 isActive = !isActive;
                 _view.gameObject.SetActive(isActive);
             });
+        _view.gameObject.SetActive(isActive);
+        await _view.SetupAsync();
     }
 }
