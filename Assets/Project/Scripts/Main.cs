@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using KanKikuchi.AudioManager;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class Main : SingletonMonoBehaviour<Main> {
@@ -20,5 +21,11 @@ public class Main : SingletonMonoBehaviour<Main> {
         var setting = AudioManagerSetting.Entity;
         BGMManager.Create();
         SEManager.Create();
+    }
+
+    public async UniTask ReloadAsync() {
+        await UniTask.SwitchToMainThread();
+        await ContextManager.ReloadAsync();
+        SceneManager.LoadScene(GameConstants.SceneReload);
     }
 }
