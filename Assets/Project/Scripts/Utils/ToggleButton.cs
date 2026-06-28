@@ -10,7 +10,7 @@ using UnityEditor;
 /// <summary>
 /// interactableのOn/OffでonButton, offButton表示切り替えるやつ
 /// isToggleTargetGraphic onでtargetGraphic時にtargetGraphicも変える
-/// </summary>
+/// /// </summary>
 public class ToggleButton : Button {
     public enum SingletToggleMode {
         VISIBLE,
@@ -21,7 +21,7 @@ public class ToggleButton : Button {
     public Observable<bool> IsOnAsObservable() => this._isOn
         .AsObservable()
         .DistinctUntilChanged();
-    
+
     public bool IsOn {
         get => this._isOn.Value;
         set {
@@ -47,7 +47,7 @@ public class ToggleButton : Button {
         base.Awake();
         this.OnIsAutoToggleChanged();
     }
-    
+
     /// <summary>
     /// Transition the Selectable to the entered state.
     /// </summary>
@@ -82,9 +82,8 @@ public class ToggleButton : Button {
 
         }
     }
-    
-    public void OnIsAutoToggleChanged()
-    {
+
+    public void OnIsAutoToggleChanged() {
         this._isAutoToggleDisposable?.Dispose();
         if (this.IsAutoToggle) {
             this._isAutoToggleDisposable = this.OnClickAsObservable()
@@ -98,11 +97,10 @@ public class ToggleButton : Button {
 [CanEditMultipleObjects]
 [CustomEditor(typeof(ToggleButton), true)]
 public class ToggleButtonEditor : ButtonEditor {
-    
+
     SerializedProperty isAutoToggle;
 
-    protected override void OnEnable()
-    {
+    protected override void OnEnable() {
         base.OnEnable();
         isAutoToggle = serializedObject.FindProperty("IsAutoToggle");
     }
@@ -115,8 +113,7 @@ public class ToggleButtonEditor : ButtonEditor {
 
         EditorGUILayout.PropertyField(isAutoToggle);
 
-        if (EditorGUI.EndChangeCheck())
-        {
+        if (EditorGUI.EndChangeCheck()) {
             serializedObject.ApplyModifiedProperties();
 
             // プロパティが変更されたときの処理
@@ -125,7 +122,7 @@ public class ToggleButtonEditor : ButtonEditor {
             // オブジェクトをDirtyにする（保存対象）
             EditorUtility.SetDirty(component);
         }
-        
+
         component.IsOn =
             EditorGUILayout.Toggle("IsOn", component.IsOn);
         component.ToggleMode =

@@ -67,8 +67,7 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "SAM_Template.slnx",
-    // =============== 共通エディタ設定 ===============
+    "dotnet.defaultSolution": "Action_1.slnx",
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.detectIndentation": false,
