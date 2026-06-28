@@ -1,6 +1,9 @@
 using AsyncFSM;
-public class SamBaseStateParam : Options {
 
+/// <summary>
+/// ステート遷移時に渡すパラメータの共通基底。
+/// </summary>
+public class SamBaseStateParam : Options {
 }
 
 public abstract class SamBaseState<TContext, TModel, TStateParam> : State<TStateParam>
@@ -11,6 +14,9 @@ public abstract class SamBaseState<TContext, TModel, TStateParam> : State<TState
     public TContext Context { get; protected set; }
     public TModel Model { get; protected set; }
 
+    /// <summary>
+    /// ステートをコンテキスト・モデルに紐付けて初期化する。
+    /// </summary>
     public SamBaseState(TContext context) {
         Context = context;
         Model = Context.GetModel<TModel>();
