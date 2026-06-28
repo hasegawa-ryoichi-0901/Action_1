@@ -19,7 +19,7 @@ public class ContextManager : SingletonMonoBehaviour<ContextManager> {
         await this.UnloadAsync();
         // 初期に必要なContext
         var initialContexts = new ISamContext[] {
-            //MainContext.Instance,
+            TitleContext.Instance,
         };
         Contexts = initialContexts
             .AsValueEnumerable()
