@@ -19,5 +19,6 @@ public interface ISamContext {
         OnSetupCompleted.AsUniTaskAsyncEnumerable();
     abstract ContextType ContextType { get; }
     abstract UniTask SetupAsync(SamSetupParam setupParam = null);
+    abstract UniTask DisposeAsync();
     CompositeDisposable AsDisposable { get; }
 }

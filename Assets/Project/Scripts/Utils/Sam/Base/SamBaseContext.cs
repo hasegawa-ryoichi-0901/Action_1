@@ -1,18 +1,19 @@
 using System;
-
 using AsyncFSM;
-
 using Cysharp.Threading.Tasks;
-
 using R3;
-
 using Random = UnityEngine.Random;
 
 /// <summary>
+/// base scene context class
+/// </summary>
+/// <remarks>
+/// <para>
 /// Lifecycle
 /// 1. <see cref="SetupAsync"/>
-/// 2. InitialState
-/// </summary>
+/// 2.  InitialState
+/// </para>
+/// </remarks>
 /// <typeparam name="TModel">dao</typeparam>
 public abstract class SamBaseContext<TModel> : ISamContext, ISamAction
     where TModel : ISamModel, new() {
@@ -63,7 +64,9 @@ public abstract class SamBaseContext<TModel> : ISamContext, ISamAction
     public virtual T GetContext<T>() where T : SamBaseContext<TModel> {
         return this as T;
     }
-
+    /// <summary>
+    /// dao
+    /// </summary>
     public TModel Model;
 
     protected SamBaseContext() {
@@ -95,6 +98,13 @@ public abstract class SamBaseContext<TModel> : ISamContext, ISamAction
         _onDispose.OnNext(Unit.Default);
     }
 
+    /// <summary>
+    /// 次のUpdateで処理が開始される
+    /// </summary>
+    /// <param name="param"></param>
+    /// <typeparam name="TState1"></typeparam>
+    /// <typeparam name="TParam"></typeparam>
+    /// <returns></returns>
     public async UniTask TransitionExternalAsync<TState1, TParam>(TParam param = null)
         where TState1 : IState
         where TParam : Options {
@@ -140,9 +150,7 @@ public abstract class SamBaseContext<TModel> : ISamContext, ISamAction
         }
         return StateMachine.GetState<TState>();
     }
-
     public virtual bool IsDisposed => Model == null;
     protected readonly Subject<Unit> _onDispose = new Subject<Unit>();
     public Observable<Unit> OnDisposeAsObservable() => _onDispose.AsObservable();
-
 }
