@@ -1,10 +1,10 @@
-using System.Data;
 using Cysharp.Threading.Tasks;
-using R3.Triggers;
+
 using UnityEngine;
-using R3;
 
-
+/// <summary>
+/// View 系ステートで利用する追加パラメータの基底。
+/// </summary>
 public class SamViewStateParam : SamBaseStateParam {
 }
 
@@ -16,57 +16,47 @@ namespace SamViewState {
     /// <typeparam name="TModel"></typeparam>
     /// <typeparam name="TStateParam"></typeparam>
     /// <typeparam name="TView"></typeparam>
-    public class Default<TContext, TModel, TStateParam, TView> : SamBaseState<TContext, TModel, TStateParam>
+    public class Default<TContext, TModel, TStateParam, TView> : SamViewBaseState<TContext, TModel, TStateParam, TView>
         where TContext : ISamViewAction, new()
-        where TModel : SamViewModel<TView>, new()
-        where TStateParam : SamBaseStateParam
+        where TModel : SamBaseModel, new()
+        where TStateParam : SamViewStateParam
         where TView : MonoBehaviour {
-        public TView View => Model.View;
 
         public Default(TContext context) : base(context) {
+
         }
     }
 
-    public class Init<TContext, TModel, TStateParam, TView> : SamBaseState<TContext, TModel, TStateParam>
+    public class Init<TContext, TModel, TStateParam, TView> : SamViewBaseState<TContext, TModel, TStateParam, TView>
         where TContext : ISamViewAction, new()
-        where TModel : SamViewModel<TView>, new()
-        where TStateParam : SamBaseStateParam
+        where TModel : SamBaseModel, new()
+        where TStateParam : SamViewStateParam
         where TView : MonoBehaviour {
-        public TView View => Model.View;
 
         public Init(TContext context) : base(context) {
         }
 
+        /// <summary>
+        /// View プレハブ読み込み前の準備を実行する。
+        /// </summary>
         public override async UniTask OnEnter() {
             await base.OnEnter();
-            await UniTask.SwitchToMainThread();
-
-            if (Model.ViewObject) {
-                GameObject.Destroy(Model.ViewObject);
-                Model.ViewObject = null;
-            }
-
-            if (Model.ViewPrefab) {
-                Resources.UnloadAsset(Model.ViewPrefab);
-                Model.ViewPrefab = null;
-            }
-
-            Model.ViewPrefab = await Context.LoadViewPrefabAsync();
-            if (!Model.ViewPrefab) {
-                throw new DataException(Model.ViewPrefabPath);
-            }
+            await Context.PrepareViewAsync();
         }
     }
 
     public class Load<TContext, TModel, TStateParam, TView> : SamBaseState<TContext, TModel, TStateParam>
         where TContext : ISamViewAction, new()
-        where TModel : SamViewModel<TView>, new()
-        where TStateParam : SamBaseStateParam
+        where TModel : SamBaseModel, new()
+        where TStateParam : SamViewStateParam
         where TView : MonoBehaviour {
 
         public Load(TContext context) : base(context) {
         }
 
+        /// <summary>
+        /// プレハブから View を生成し、追加セットアップを行う。
+        /// </summary>
         public override async UniTask OnEnter() {
             await base.OnEnter();
             await UniTask.SwitchToMainThread();
@@ -77,14 +67,16 @@ namespace SamViewState {
 
     public class Show<TContext, TModel, TStateParam, TView> : SamBaseState<TContext, TModel, TStateParam>
         where TContext : ISamViewAction, new()
-        where TModel : SamViewModel<TView>, new()
-        where TStateParam : SamBaseStateParam
+        where TModel : SamBaseModel, new()
+        where TStateParam : SamViewStateParam
         where TView : MonoBehaviour {
-        public TView View => Model.View;
 
         public Show(TContext context) : base(context) {
         }
 
+        /// <summary>
+        /// View を表示状態へ切り替える。
+        /// </summary>
         public override async UniTask OnEnter() {
             await base.OnEnter();
             await Context.ShowAsync();
@@ -92,65 +84,72 @@ namespace SamViewState {
 
     }
 
-    public class Active<TContext, TModel, TStateParam, TView> : SamBaseState<TContext, TModel, TStateParam>
+    public class Active<TContext, TModel, TStateParam, TView> : SamViewBaseState<TContext, TModel, TStateParam, TView>
         where TContext : ISamViewAction, new()
-        where TModel : SamViewModel<TView>, new()
-        where TStateParam : SamBaseStateParam
+        where TModel : SamBaseModel, new()
+        where TStateParam : SamViewStateParam
         where TView : MonoBehaviour {
-        public TView View => Model.View;
 
         public Active(TContext context) : base(context) {
         }
     }
 
-    public class Hide<TContext, TModel, TStateParam, TView> : SamBaseState<TContext, TModel, TStateParam>
+    public class Hide<TContext, TModel, TStateParam, TView> : SamViewBaseState<TContext, TModel, TStateParam, TView>
         where TContext : ISamViewAction, new()
-        where TModel : SamViewModel<TView>, new()
-        where TStateParam : SamBaseStateParam
+        where TModel : SamBaseModel, new()
+        where TStateParam : SamViewStateParam
         where TView : MonoBehaviour {
-        public TView View => Model.View;
-
         public Hide(TContext context) : base(context) {
         }
 
+        /// <summary>
+        /// View を非表示にして更新ループを停止する。
+        /// </summary>
         public override async UniTask OnEnter() {
             await base.OnEnter();
             await HideAsync();
         }
 
+        /// <summary>
+        /// メインスレッドで View を無効化する。
+        /// </summary>
         protected virtual async UniTask HideAsync() {
             await UniTask.SwitchToMainThread();
-            Model.ViewObject.SetActive(false);
+            await Context.HideAsync();
         }
     }
 
-    public class Unload<TContext, TModel, TStateParam, TView> : SamBaseState<TContext, TModel, TStateParam>
+    public class Unload<TContext, TModel, TStateParam, TView> : SamViewBaseState<TContext, TModel, TStateParam, TView>
         where TContext : ISamViewAction, new()
-        where TModel : SamViewModel<TView>, new()
-        where TStateParam : SamBaseStateParam
+        where TModel : SamBaseModel, new()
+        where TStateParam : SamViewStateParam
         where TView : MonoBehaviour {
-        public TView View => Model.View;
 
         public Unload(TContext context) : base(context) {
         }
 
+        /// <summary>
+        /// View・モデルを破棄して状態を初期化する。
+        /// </summary>
         public override async UniTask OnEnter() {
             await UniTask.SwitchToMainThread();
-            if (Model.ViewObject) {
-                GameObject.Destroy(Model.ViewObject);
-            }
-
-            Model.ViewObject = null;
-            Model.View = null;
-
-            if (Model != null) {
-                Model.ViewPrefab = null;
-                await Resources.UnloadUnusedAssets();
-                await Model.DisposeAsync();
-            }
-
+            await Context.UnloadAsync();
             await base.OnEnter();
+        }
+    }
 
+    public class SamViewBaseState<TContext, TModel, TStateParam, TView> : SamBaseState<TContext, TModel, TStateParam>
+        where TContext : ISamViewAction, new()
+        where TModel : SamBaseModel, new()
+        where TStateParam : SamViewStateParam
+        where TView : MonoBehaviour {
+        /// <summary>
+        /// コンテキストから取得した View インスタンス。
+        /// </summary>
+        public TView View { get; protected set; }
+
+        public SamViewBaseState(TContext context) : base(context) {
+            View = Context.GetView<TView>();
         }
     }
 }
