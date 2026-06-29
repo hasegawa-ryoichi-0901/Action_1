@@ -146,10 +146,7 @@ namespace SamViewState {
         /// <summary>
         /// コンテキストから取得した View インスタンス。
         /// </summary>
-        public TView View { get; protected set; }
-
         public SamViewBaseState(TContext context) : base(context) {
-            View = Context.GetView<TView>();
         }
     }
 }
