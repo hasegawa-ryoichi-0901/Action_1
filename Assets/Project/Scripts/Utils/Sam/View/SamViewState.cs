@@ -50,7 +50,7 @@ namespace SamViewState {
         where TModel : SamBaseModel, new()
         where TStateParam : SamViewStateParam
         where TView : MonoBehaviour {
-
+        protected TView _view => Context.GetView<TView>();
         public Load(TContext context) : base(context) {
         }
 

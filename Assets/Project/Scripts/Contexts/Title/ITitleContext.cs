@@ -1,3 +1,3 @@
-public interface ITitleContext : ISamViewContext<TitleView> {
+public interface ITitleContext<TView> : ISamViewContext<TView> where TView : TitleView {
 
 }

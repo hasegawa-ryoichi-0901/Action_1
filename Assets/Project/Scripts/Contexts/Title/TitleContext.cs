@@ -1,6 +1,7 @@
 using AsyncFSM;
 using Cysharp.Threading.Tasks;
 using TitleState;
+using UnityEngine;
 
 public class TitleSetupParam : SamSetupParam {
 }
@@ -37,8 +38,7 @@ public class TitleContext : TitleContext<TitleModel, TitleView> {
     }
 }
 
-public abstract class TitleContext<TModel, TView> : SamViewContext<TModel, TView>, ITitleAction, ITitleContext
+public abstract class TitleContext<TModel, TView> : SamViewContext<TModel, TView>, ITitleAction, ITitleContext<TView>
     where TModel : TitleModel, new()
     where TView : TitleView {
-    TitleView ISamViewContext<TitleView>.View => View;
 }

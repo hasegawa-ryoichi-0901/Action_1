@@ -1,38 +1,35 @@
-
-
 using Cysharp.Threading.Tasks;
-using ObservableCollections;
 
-namespace TitleState {
+namespace MainState {
 
     public class Param : SamViewStateParam {
 
     }
 
     public class Default<TContext, TModel, TStateParam, TView> : SamViewState.Default<TContext, TModel, TStateParam, TView>
-        where TContext : ITitleAction, new()
-        where TModel : TitleModel, new()
+        where TContext : IMainAction, new()
+        where TModel : MainModel, new()
         where TStateParam : Param
-        where TView : TitleView {
+        where TView : MainView {
         public Default(TContext context) : base(context) {
 
         }
     }
 
     public class Init<TContext, TModel, TStateParam, TView> : SamViewState.Init<TContext, TModel, TStateParam, TView>
-        where TContext : ITitleAction, new()
-        where TModel : TitleModel, new()
+        where TContext : IMainAction, new()
+        where TModel : MainModel, new()
         where TStateParam : Param
-        where TView : TitleView {
+        where TView : MainView {
         public Init(TContext context) : base(context) {
         }
     }
 
     public class Load<TContext, TModel, TStateParam, TView> : SamViewState.Load<TContext, TModel, TStateParam, TView>
-        where TContext : ITitleAction, new()
-        where TModel : TitleModel, new()
+        where TContext : IMainAction, new()
+        where TModel : MainModel, new()
         where TStateParam : Param
-        where TView : TitleView {
+        where TView : MainView {
         public Load(TContext context) : base(context) {
 
         }
@@ -44,10 +41,10 @@ namespace TitleState {
     }
 
     public class Show<TContext, TModel, TStateParam, TView> : SamViewState.Show<TContext, TModel, TStateParam, TView>
-        where TContext : ITitleAction, new()
-        where TModel : TitleModel, new()
+        where TContext : IMainAction, new()
+        where TModel : MainModel, new()
         where TStateParam : Param
-        where TView : TitleView {
+        where TView : MainView {
 
         public Show(TContext context) : base(context) {
 
@@ -55,10 +52,10 @@ namespace TitleState {
     }
 
     public class Hide<TContext, TModel, TStateParam, TView> : SamViewState.Hide<TContext, TModel, TStateParam, TView>
-        where TContext : ITitleAction, new()
-        where TModel : TitleModel, new()
+        where TContext : IMainAction, new()
+        where TModel : MainModel, new()
         where TStateParam : Param
-        where TView : TitleView {
+        where TView : MainView {
 
         public Hide(TContext context) : base(context) {
 
@@ -66,10 +63,10 @@ namespace TitleState {
     }
 
     public class Unload<TContext, TModel, TStateParam, TView> : SamViewState.Unload<TContext, TModel, TStateParam, TView>
-        where TContext : ITitleAction, new()
-        where TModel : TitleModel, new()
+        where TContext : IMainAction, new()
+        where TModel : MainModel, new()
         where TStateParam : Param
-        where TView : TitleView {
+        where TView : MainView {
 
         public Unload(TContext context) : base(context) {
 
