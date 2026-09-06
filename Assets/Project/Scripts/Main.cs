@@ -9,7 +9,7 @@ public class Main : SingletonMonoBehaviour<Main> {
         await base.Awake();
         InitializeAudioSettings();
 
-#if true
+#if UNITY_EDITOR
         var dctx = await Resources.LoadAsync<GameObject>("Debug/#DebugContext");
         Instantiate(dctx);
         await UniTask.Yield();
